@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>贪吃蛇</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#12121a;color:#fff;text-align:center;padding:20px}
+canvas{background:#000;border:2px solid #444}
+.back{display:block;margin:10px auto;color:#7cf}
+</style>
+</head>
+<body>
+<a href="../index.html" class="back">← 返回首页</a>
+<h3>贪吃蛇｜方向键控制</h3>
+<canvas id="canvas" width="400" height="400"></canvas>
+<script>
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+const size=20;
+const count=canvas.width/size;
+let snake=[{x:10,y:10}];
+let dx=1,dy=0;
+let food={x:15,y:15};
+let gameOver=false;
+
+function randomFood(){
+  return {x:Math.floor(Math.random()*count),y:Math.floor(Math.random()*count)};
+}
+
+function draw(){
+  ctx.fillStyle="#000";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#f44";
+  ctx.fillRect(food.x*size,food.y*size,size-2,size-2);
+  ctx.fillStyle="#4f8";
+  snake.forEach(seg=>ctx.fillRect(seg.x*size,seg.y*size,size-2,size-2));
+}
+function update(){
+  if(gameOver)return;
+  let head={x:snake[0].x+dx,y:snake[0].y+dy};
+  if(head.x<0||head.y<0||head.x>=count||head.y>=count)gameOver=true;
+  for(let seg of snake)if(seg.x===head.x&&seg.y===head.y)gameOver=true;
+  snake.unshift(head);
+  if(head.x===food.x&&head.y===food.y){
+    food=randomFood();
+  }else{
+    snake.pop();
+  }
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowUp"&&dy!==1){dx=0;dy=-1}
+  if(e.key==="ArrowDown"&&dy!==-1){dx=0;dy=1}
+  if(e.key==="ArrowLeft"&&dx!==1){dx=-1;dy=0}
+  if(e.key==="ArrowRight"&&dx!==-1){dx=1;dy=0}
+})
+function loop(){update();draw();}
+setInterval(loop,120);
+</script>
+</body>
+</html>
